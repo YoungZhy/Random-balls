@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Random-balls</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body,
+        html {
+            overflow: hidden;
+        }
+
+        #balls {
+            background-color: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="balls"></canvas>
+</body>
+<script>
+    var ballCanvas = document.getElementById('balls')
+    var ctx = ballCanvas.getContext('2d')
+    var balls = []
+    let w = ballCanvas.width = window.innerWidth
+    let h = ballCanvas.height = window.innerHeight
+    
+    // setInterval(() => {
+    //     ctx.clearRect(0, 0, w, h)
+    //     let ball = new Ball(ctx, w, h)
+    //     ball.draw()
+    //     ball.move()
+    // }, 300)
+
+    window.addEventListener('resize', resizeCanvas, false)
+
+    function resizeCanvas() {
+        balls=[]
+        let w = ballCanvas.width = window.innerWidth
+        let h = ballCanvas.height = window.innerHeight
+        
+        for(let i=0;i<20;i++){
+        let ball = new Ball(ctx,w,h)
+        balls.push(ball)
+        setInterval(() => {
+        ctx.clearRect(0, 0, w, h)
+    },30)
+    }
+        // setInterval(() => {
+        // ctx.clearRect(0, 0, w, h)
+        // for(let i=0;i<balls.length;i++){
+        //     balls[i].draw()
+        //     balls[i].move()
+        // }
+    // },30)
+    }
+    var rand = (m, n) => Math.floor(Math.random() * (n - m + 1) + m) //return [m,n]
+
+    class Ball {
+        constructor(ctx, canvasWidth, canvasHeight) {
+            // canvas
+            this.ctx = ctx
+
+            //  半径
+            this.r = rand(50, 100)
+
+            // 最大位移
+            this.maxWidth = canvasWidth - this.r
+            this.maxHeight = canvasHeight - this.r
+
+            // 坐标
+            this.x = rand(this.r, this.maxWidth)
+            this.y = rand(this.r, this.maxHeight)
+
+            // 速度
+            let speed = rand(2, 6)
+            this.speedX = rand(0, 1) > 0 ? speed : -speed
+            this.speedY = rand(0, 1) > 0 ? speed : -speed
+
+
+            this.color = `rgb(${rand(0, 255)},${rand(0, 255)},${rand(0, 255)})`
+        }
+        draw() {
+            this.ctx.beginPath()
+            this.ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false)
+            this.ctx.fillStyle = this.color
+            this.ctx.closePath()
+            this.ctx.fill()
+            return this
+        }
+        move() {
+            this.x += this.speedX
+            if(this.x>=this.maxWidth){
+                this.speedX  = -this.speedX
+            }else if(this.x<this.r){
+                this.speedX  = -this.speedX
+            }
+            this.y += this.speedY
+            if(this.y>=this.maxHeight){
+                this.speedY  = -this.speedY
+            }else if(this.y<this.r){
+                this.speedY  = -this.speedY
+            }
+        }
+    }
+    for(let i=0;i<20;i++){
+        let ball = new Ball(ctx,w,h)
+        balls.push(ball)
+    }
+    setInterval(() => {
+        ctx.clearRect(0, 0, w, h)
+        for(let i=0;i<balls.length;i++){
+            balls[i].draw()
+            balls[i].move()
+        }
+    },30)
+</script>
+
+</html>
