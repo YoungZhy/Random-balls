@@ -12,61 +12,59 @@
             padding: 0;
         }
 
-        body,
-        html {
+        body {
+            width: 100vw;
+            height: 100vh;
             overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        #balls {
-            background-color: #000;
+        #box {
+            box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
 
 <body>
-    <canvas id="balls"></canvas>
+    <div id="box">
+        <canvas id="balls"></canvas>
+    </div>
 </body>
+
 <script>
-    var ballCanvas = document.getElementById('balls')
-    var ctx = ballCanvas.getContext('2d')
-    var balls = []
-    let w = ballCanvas.width = window.innerWidth
-    let h = ballCanvas.height = window.innerHeight
-    
-    // setInterval(() => {
-    //     ctx.clearRect(0, 0, w, h)
-    //     let ball = new Ball(ctx, w, h)
-    //     ball.draw()
-    //     ball.move()
-    // }, 300)
+    window.onload = function () {
+        var ballCanvas = document.getElementById('balls')
+        var box = document.getElementById('box')
+        var ctx = ballCanvas.getContext('2d')
+        const w = ballCanvas.width = window.innerWidth * 0.8
+        const h = ballCanvas.height = window.innerHeight * 0.8
+        box.style.width = `${w}px`
+        box.style.height = `${h}px`
 
-    window.addEventListener('resize', resizeCanvas, false)
+        var balls = []
 
-    function resizeCanvas() {
-        balls=[]
-        let w = ballCanvas.width = window.innerWidth
-        let h = ballCanvas.height = window.innerHeight
-        
-        for(let i=0;i<20;i++){
-        let ball = new Ball(ctx,w,h)
-        balls.push(ball)
-        setInterval(() => {
-        ctx.clearRect(0, 0, w, h)
-    },30)
+        for (let i = 0; i < 10; i++) {
+            let ball = new Ball(ctx, w, h)
+            balls.push(ball)
+        }
+        var timer = setInterval(() => {
+            ctx.clearRect(0, 0, w, h)
+            for (let i = 0; i < balls.length; i++) {
+                balls[i].draw()
+                balls[i].move()
+            }
+        }, 30)
     }
-        // setInterval(() => {
-        // ctx.clearRect(0, 0, w, h)
-        // for(let i=0;i<balls.length;i++){
-        //     balls[i].draw()
-        //     balls[i].move()
-        // }
-    // },30)
-    }
-    var rand = (m, n) => Math.floor(Math.random() * (n - m + 1) + m) //return [m,n]
 
+    // random numbers return [m, n]
+    var rand = (m, n) => Math.floor(Math.random() * (n - m + 1) + m)
+
+    // ball类
     class Ball {
         constructor(ctx, canvasWidth, canvasHeight) {
-            // canvas
+            // canvas ctx
             this.ctx = ctx
 
             //  半径
@@ -85,43 +83,41 @@
             this.speedX = rand(0, 1) > 0 ? speed : -speed
             this.speedY = rand(0, 1) > 0 ? speed : -speed
 
-
+            // 颜色
             this.color = `rgb(${rand(0, 255)},${rand(0, 255)},${rand(0, 255)})`
         }
+
+        // ball绘制
         draw() {
             this.ctx.beginPath()
             this.ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false)
             this.ctx.fillStyle = this.color
+            this.ctx.shadowColor = this.color
+            this.ctx.shadowBlur = 5
+            this.ctx.globalAlpha = 0.6
             this.ctx.closePath()
             this.ctx.fill()
-            return this
+            // this.ctx.globalCompositeOperation = 'destination-over'
         }
+
+        // ball移动
         move() {
             this.x += this.speedX
-            if(this.x>=this.maxWidth){
-                this.speedX  = -this.speedX
-            }else if(this.x<this.r){
-                this.speedX  = -this.speedX
+            if (this.x >= this.maxWidth) {
+                this.speedX = -this.speedX
+            } else if (this.x < this.r) {
+                this.speedX = -this.speedX
             }
+
             this.y += this.speedY
-            if(this.y>=this.maxHeight){
-                this.speedY  = -this.speedY
-            }else if(this.y<this.r){
-                this.speedY  = -this.speedY
+            if (this.y >= this.maxHeight) {
+                this.speedY = -this.speedY
+            } else if (this.y < this.r) {
+                this.speedY = -this.speedY
             }
         }
     }
-    for(let i=0;i<20;i++){
-        let ball = new Ball(ctx,w,h)
-        balls.push(ball)
-    }
-    setInterval(() => {
-        ctx.clearRect(0, 0, w, h)
-        for(let i=0;i<balls.length;i++){
-            balls[i].draw()
-            balls[i].move()
-        }
-    },30)
+
 </script>
 
 </html>
